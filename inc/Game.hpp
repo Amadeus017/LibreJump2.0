@@ -2,7 +2,9 @@
 #ifndef _GAME_HPP_
 #define _GAME_HPP_
 
-#include "./Entities.hpp";
+#include <iostream>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 class Game {
 
@@ -26,8 +28,17 @@ public:
     void Init(const char*, int, int, int, int, bool);
 
     void HandleEvents();
-    // void Update();
-    // void Render();
+
+    void RenderMainMenu();
+    void QueryMainMenu(int, int);
+
+    void RenderSettings();
+    void QuerySettings(int, int);
+
+    void RenderScores();
+    void QueryScores(int, int);
+
+    void Play();
 
     void Clean();
 

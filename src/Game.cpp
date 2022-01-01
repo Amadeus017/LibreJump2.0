@@ -1,6 +1,5 @@
 
 #include "../inc/Game.hpp"
-#include "../inc/Entities.hpp"
 
 Game::Game() {}
 Game::~Game() {}
@@ -8,8 +7,8 @@ Game::~Game() {}
 void Game::Init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen) {
 
     SDL_Init( SDL_INIT_EVERYTHING );
+    
     TTF_Init();
-
     gFont = TTF_OpenFont("/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf", 24);
 
     int flags = (fullscreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_SHOWN);
@@ -19,61 +18,84 @@ void Game::Init(const char* title, int xpos, int ypos, int width, int height, bo
 
 
     gameState = MAIN_MENU;
-
-    // SDL_SetRenderDrawColor(renderer, 0, 100, 40, 255);
+    RenderMainMenu();
 
     isRunning = true;
 }
 
-// void Game::HandleEvents() {
+void Game::HandleEvents() {
 
-//     SDL_Event event;
-//     SDL_PollEvent(&event);
+    SDL_Event event;
+    SDL_WaitEvent( &event );
 
-//     switch( event.type ) {
+    switch( event.type ) {
 
-//         case SDL_QUIT:
-//             isRunning = false;
-//             break;
+        case SDL_QUIT:
+            isRunning = false;
+            break;
 
-//         default:
-//             break;
-//     }
-// }
+        case SDL_MOUSEBUTTONDOWN:
+            std::cout << event.button.x << "        " << event.button.y << '\n';
+            
+            if( gameState == MAIN_MENU )    QueryMainMenu( event.button.x, event.button.y );
+            else if( gameState == SETTINGS )    QuerySettings( event.button.x, event.button.y );
+            else if( gameState == SCORE )    QueryScores( event.button.x, event.button.y );
 
-// void Game::Update() {}
+            break;
 
-// void Game::Render() {
+        default:
+            break;
 
-//     if( gameState == MAIN_MENU ) {
+    }
+}
 
-//         SDL_SetRenderDrawColor( renderer, 0, 255, 0, 255 );
-//         SDL_RenderClear( renderer );
+void Game::RenderMainMenu() {
 
-//         // // as TTF_RenderText_Solid could only be used on
-//         // // SDL_Surface then you have to create the surface first
-//         // SDL_Surface* surfaceMessage =
-//         //     TTF_RenderText_Solid(gFont, "PLAY", {255, 255, 255}); 
+    SDL_SetRenderDrawColor( renderer, 0, 255, 0, 255 );
+    SDL_RenderClear( renderer );
+    SDL_RenderPresent( renderer );
+}
+void Game::QueryMainMenu( int posX, int posY ) {
 
-//         // // now you can convert it into a texture
-//         // SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+    std::cout << posX << "         <<\n";
 
-//         // SDL_Rect r;
+    if( posX > 400) {
 
-//         // r.h = 100;
-//         // r.w = 200;
-//         // r.x = 50;
-//         // r.y = 50;
+        gameState = SETTINGS;
+        RenderSettings();
 
-//         // SDL_SetRenderDrawColor( renderer, 0, 0, 255, 255 );
-//         // SDL_RenderFillRect( renderer, &r );
+    } else {
 
+        Play();
+    }
+}
 
-//         // SDL_RenderCopy( renderer, Message, NULL, &r );
-//     }
+void Game::RenderSettings() {
+    
+    SDL_SetRenderDrawColor( renderer, 0, 0, 255, 255 );
+    SDL_RenderClear( renderer );
+    SDL_RenderPresent( renderer );
 
-//     SDL_RenderPresent(renderer);
-// }
+}
+void Game::QuerySettings( int posX, int posY ) {
+
+    if( posX > 400) {
+        gameState = MAIN_MENU;
+        RenderMainMenu();
+    }
+}
+
+void Game::RenderScores() {
+    
+}
+void Game::QueryScores( int posX, int posY ) {
+
+}
+
+void Game::Play() {
+
+    
+}
 
 void Game::Clean() {
 
