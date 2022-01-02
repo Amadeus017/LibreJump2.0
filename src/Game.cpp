@@ -54,15 +54,18 @@ void Game::RenderMainMenu() {
     SDL_SetRenderDrawColor( renderer, 0, 255, 0, 255 );
     SDL_RenderClear( renderer );
 
-    SDL_Rect b1, b2, b3;
+    SDL_Rect b1, b2, b3, e;
 
     b1 = {100, 100, 200, 100};
     b2 = {100, 300, 200, 100};
     b3 = {100, 500, 200, 100};
+    e = {700, 125, 50, 50};
 
     UI::RenderTextBox(renderer, b1, "PLAY", gFont, {0,0,255}, {0,0,0});
     UI::RenderTextBox(renderer, b2, "SETTINGS", gFont, {0,0,255}, {0,0,0});
     UI::RenderTextBox(renderer, b3, "SCORE", gFont, {0,0,255}, {0,0,0});
+
+    UI::RenderTextBox(renderer, e, "X", gFont, {0,0,255}, {0,0,0});
 
     SDL_RenderPresent( renderer );
 }
@@ -87,6 +90,11 @@ void Game::QueryMainMenu( int posX, int posY ) {
 
         gameState = SCORE;
         RenderScores();
+    }
+
+    else if((700 < posX) and (posX < 750) and (125 < posY) and (posY < 175)) {
+
+        isRunning = false;
     }
 }
 
@@ -115,12 +123,14 @@ void Game::RenderScores() {
     SDL_SetRenderDrawColor( renderer, 255, 0, 255, 255 );
     SDL_RenderClear( renderer );
 
-    SDL_Rect r, r1, r2, r3;
+    SDL_Rect r, r1, r2, r3, e;
 
     r = {500, 300, 200, 100};
     r1 = {100, 100, 200, 100};
     r2 = {100, 300, 200, 100};
     r3 = {100, 500, 200, 100};
+
+    e = {700, 125, 50, 50};
 
     int scores[3];
     GetHighScores(scores);
@@ -138,16 +148,17 @@ void Game::RenderScores() {
     UI::RenderTextBox(renderer, r1, numberstring1, gFont, {0,50,100}, {0,0,0});
     UI::RenderTextBox(renderer, r2, numberstring2, gFont, {0,50,100}, {0,0,0});
     UI::RenderTextBox(renderer, r3, numberstring3, gFont, {0,50,100}, {0,0,0});
+    UI::RenderTextBox(renderer, e, "X", gFont, {0,0,255}, {0,0,0});
 
 
     SDL_RenderPresent( renderer );
 }
 void Game::QueryScores( int posX, int posY ) {
-    
-    // if( posX > 400) {
+
+    if((700 < posX) and (posX < 750) and (125 < posY) and (posY < 175)) {
         gameState = MAIN_MENU;
         RenderMainMenu();
-    // }
+    }
 }
 
 int* Game::GetHighScores( int *arr ) {

@@ -277,7 +277,7 @@ void GamePlay::Update() {
 
         GenerateObstacle();
 
-        obstacleCoolTime = 1;
+        obstacleCoolTime = 0.4;
 
         std::cout << "new obstacle!\n;";
     }
