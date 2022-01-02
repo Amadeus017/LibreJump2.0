@@ -31,9 +31,31 @@ void Entity::reduceCoolTime( float elapsed ) {
 
     coolTime = (coolTime < 0) ? 0 : coolTime;
 
-    std::cout << coolTime << '\n';
+    // std::cout << coolTime << '\n';
 }
- 
+CurrWall Entity::GetCurrWall() {
+
+    return currWall;
+}
+float Entity::GetPosX() {
+
+    return posX;
+}
+float Entity::GetPosY() {
+
+    return posY;
+}
+float Entity::GetWidth() {
+
+    return width;
+}
+float Entity::GetHeight() {
+
+    return height;
+}
+
+
+
 Player::Player() {
 
     coolTime = 0;
@@ -70,7 +92,7 @@ void Player::Jump() {
     coolTime = 0.1;
 }
 
-Obstacle::Obstacle( CurrWall currWall ) {
+Obstacle::Obstacle( CurrWall currWall, float fallRate ) {
     
     this->currWall = currWall;
 
@@ -84,11 +106,13 @@ Obstacle::Obstacle( CurrWall currWall ) {
     hitBox.y =  posY;
     hitBox.w = width;
     hitBox.h = height;
+
+    this->fallRate = fallRate; 
 };
 Obstacle::~Obstacle() {};
 void Obstacle::Fall( float elapsed ) {
 
-    posY += elapsed * (800.0);
+    posY += elapsed * fallRate; // = 800.0
     hitBox.y = posY;
 }
 
@@ -153,7 +177,7 @@ void Score::Render( SDL_Renderer *renderer, const char* content, TTF_Font *gFont
 }
 
 
-GamePlay::GamePlay( SDL_Renderer *renderer, TTF_Font *gFont ) {
+GamePlay::GamePlay( SDL_Renderer *renderer, TTF_Font *gFont, int difficulty ) {
     
     scenery = new Scenery();
     walls = new Walls();
@@ -169,6 +193,18 @@ GamePlay::GamePlay( SDL_Renderer *renderer, TTF_Font *gFont ) {
     elapsed = 0;
 
     obstacleCoolTime = 0;
+
+    obstacleCoolTimes[0] = 1.8;
+    obstacleCoolTimes[1] = 1;
+    obstacleCoolTimes[2] = 0.4;
+
+    fallRates[0] = 200.0;
+    fallRates[1] = 400.0;
+    fallRates[2] = 800.0;
+
+    this->difficulty = difficulty;
+
+    // std::cout << fallRates[difficulty];
 
     // SDL_SetRenderDrawColor( renderer, 0, 255, 255, 255 );
     // SDL_RenderClear( renderer );
@@ -190,19 +226,19 @@ GamePlay::~GamePlay() {
 
 void GamePlay::GenerateObstacle() {
 
-    Obstacle *o = new Obstacle( (int(elapsed*1000) % 2 == 0) ? LEFT : RIGHT );
+    Obstacle *o = new Obstacle( ((rand()%2) ? LEFT : RIGHT), fallRates[difficulty] );
 
     obstacles.push_back(o);
 }
 bool GamePlay::CheckCollision() {
     
     for(auto o : obstacles) {
-        if(player->currWall == o->currWall) {
-            if(o->posY > 650) {
+        if(player->GetCurrWall() == o->GetCurrWall()) {
+            if(o->GetPosY() > 650) {
 
                 isPlaying = false;
 
-                std::cout << "game over\n";
+                // std::cout << "game over\n";
 
                 SDL_SetRenderDrawColor( renderer, 100, 100, 100, 255 );
                 SDL_RenderClear( renderer );
@@ -277,9 +313,9 @@ void GamePlay::Update() {
 
         GenerateObstacle();
 
-        obstacleCoolTime = 0.4;
+        obstacleCoolTime = obstacleCoolTimes[difficulty];
 
-        std::cout << "new obstacle!\n;";
+        std::cout << difficulty << '\n';
     }
     
     player->reduceCoolTime( elapsed );
@@ -290,7 +326,7 @@ void GamePlay::Update() {
 
         (*it)->Fall( elapsed );
 
-        if((*it)->posY > 800) {
+        if((*it)->GetPosY() > 800) {
             delete (*it);
             it = obstacles.erase(it);
             continue;
@@ -318,6 +354,31 @@ void GamePlay::Clean() {
     
 }
 
+void GamePlay::SetFPS( float fps ) {
+
+    this->fps = fps;
+}
+void GamePlay::SetElapsed( float elapsed ) {
+
+    this->elapsed = elapsed;
+}
+void GamePlay::SetTotalFrames( Uint32 totalFrames ) {
+
+    this->totalFrames = totalFrames;
+}
+
+float GamePlay::GetFPS() {
+
+    return fps;
+}
+float GamePlay::GetElapsed() {
+
+    return elapsed;
+}
+Uint32 GamePlay::GetTotalFrames() {
+
+    return totalFrames;
+}
 bool GamePlay::IsPlaying() {
     
     return isPlaying;

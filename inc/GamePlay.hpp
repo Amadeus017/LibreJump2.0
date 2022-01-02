@@ -25,7 +25,7 @@ public:
 
 class Entity {
 
-public:
+protected:
     CurrWall currWall;
     SDL_Rect hitBox;
 
@@ -40,6 +40,13 @@ public:
 
     virtual void Render( SDL_Renderer *renderer );
     void reduceCoolTime( float elapsed );
+
+
+    CurrWall GetCurrWall();
+    float GetPosX();
+    float GetPosY();
+    float GetWidth();
+    float GetHeight();
 };
 
 class Player : public Entity {
@@ -53,8 +60,11 @@ public:
 
 class Obstacle : public Entity {
 
+private:
+    float fallRate;
+
 public:
-    Obstacle( CurrWall currWall );
+    Obstacle( CurrWall currWall, float fallRate );
     ~Obstacle();
 
     void Fall( float elapsed );
@@ -98,7 +108,11 @@ public:
 
 class GamePlay {
 
-public:
+private:
+
+    float obstacleCoolTimes[3];
+    float fallRates[3];
+    int difficulty;
 
     float obstacleCoolTime;
 
@@ -113,12 +127,12 @@ public:
 
     bool isPlaying;
 
-public:
-
     float fps, elapsed;
     Uint32 totalFrames;
 
-    GamePlay( SDL_Renderer* renderer, TTF_Font* gFont );
+public:
+
+    GamePlay( SDL_Renderer* renderer, TTF_Font* gFont, int difficulty );
     ~GamePlay();
 
     void GenerateObstacle();
@@ -132,6 +146,14 @@ public:
 
     void Clean();
 
+
+    void SetFPS( float );
+    void SetElapsed( float );
+    void SetTotalFrames( Uint32 );
+
+    float GetFPS();
+    float GetElapsed();
+    Uint32 GetTotalFrames();
 
     bool IsPlaying();
 };

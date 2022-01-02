@@ -13,6 +13,8 @@ private:
     GameState gameState;
     bool isRunning;
 
+    int difficulty;
+
     SDL_Window *window;
     SDL_Renderer *renderer;
 

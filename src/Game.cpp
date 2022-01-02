@@ -20,6 +20,8 @@ void Game::Init(const char* title, int xpos, int ypos, int width, int height, bo
     gameState = MAIN_MENU;
     RenderMainMenu();
 
+    difficulty = 1;
+
     isRunning = true;
 }
 
@@ -35,7 +37,7 @@ void Game::HandleEvents() {
             break;
 
         case SDL_MOUSEBUTTONDOWN:
-            std::cout << event.button.x << "        " << event.button.y << '\n';
+            // std::cout << event.button.x << "        " << event.button.y << '\n';
             
             if( gameState == MAIN_MENU )    QueryMainMenu( event.button.x, event.button.y );
             else if( gameState == SETTINGS )    QuerySettings( event.button.x, event.button.y );
@@ -71,7 +73,7 @@ void Game::RenderMainMenu() {
 }
 void Game::QueryMainMenu( int posX, int posY ) {
 
-    std::cout << posX << "         <<\n";
+    // std::cout << posX << "         <<\n";
 
     if( (100 < posX) and (posX < 300) and (100 < posY) and (posY < 200) ) {
 
@@ -103,19 +105,52 @@ void Game::RenderSettings() {
     SDL_SetRenderDrawColor( renderer, 255, 255, 0, 255 );
     SDL_RenderClear( renderer );
 
-    SDL_Rect r1 = {100,300,300,100};
+    SDL_Rect b1, b2, b3, e;
 
-    UI::RenderTextBox(renderer, r1, "COMING SOON!!!", gFont, {0,0,255}, {0,0,0});
+    b1 = {100, 100, 200, 100};
+    b2 = {100, 300, 200, 100};
+    b3 = {100, 500, 200, 100};
+    e = {700, 125, 50, 50};
+
+    UI::RenderTextBox(renderer, b1, "EASY", gFont, {0,0,255}, {0,0,0});
+    UI::RenderTextBox(renderer, b2, "MEDIUM", gFont, {0,0,255}, {0,0,0});
+    UI::RenderTextBox(renderer, b3, "HARD", gFont, {0,0,255}, {0,0,0});
+
+    UI::RenderTextBox(renderer, e, "X", gFont, {0,0,255}, {0,0,0});
+
 
     SDL_RenderPresent( renderer );
 
 }
 void Game::QuerySettings( int posX, int posY ) {
 
-    // if( posX > 400) {
-        gameState = MAIN_MENU;
-        RenderMainMenu();
-    // }
+    if( (100 < posX) and (posX < 300) and (100 < posY) and (posY < 200) ) {
+
+        difficulty = 0;
+
+    } 
+    
+    else if((100 < posX) and (posX < 300) and (300 < posY) and (posY < 400)) {
+
+        difficulty = 1;
+    }
+
+    else if((100 < posX) and (posX < 300) and (500 < posY) and (posY < 600)) {
+
+        difficulty = 2;
+    }
+
+    else if((700 < posX) and (posX < 750) and (125 < posY) and (posY < 175)) {
+
+    }
+
+    else {
+
+        return;
+    }
+
+    gameState = MAIN_MENU;
+    RenderMainMenu();
 }
 
 void Game::RenderScores() {
@@ -189,7 +224,7 @@ void Game::ComputeHighScore( int score ) {
 
     fout.open("./gameData/highScores", std::ofstream::out | std::ofstream::trunc);
 
-    std::cout << "____" << score << "_____" << scores[0]  << "_________" << scores[1]  << "_________" << scores[2] << "\n\n";
+    // std::cout << "____" << score << "_____" << scores[0]  << "_________" << scores[1]  << "_________" << scores[2] << "\n\n";
 
     for(int i = 0; i < 3; i++) {
         if(score > scores[i]) {
@@ -219,9 +254,10 @@ void Game::Play() {
 
     // float fps = 0;
 
-    std::cout << "here";
+    // std::cout << "here";
 
-    GamePlay *gamePlay = new GamePlay( renderer, gFont );
+    // std::cout << "hererere   " << difficulty << '\n'; 
+    GamePlay *gamePlay = new GamePlay( renderer, gFont, difficulty );
 
     // gamePlay->GenerateObstacle();
 
@@ -229,7 +265,9 @@ void Game::Play() {
 
     while( gamePlay->IsPlaying() ) {
 
-        gamePlay->totalFrames++;
+        // gamePlay->totalFrames++;
+        gamePlay->SetTotalFrames( gamePlay->GetTotalFrames() + 1 );
+
 		// Uint32 startTicks = SDL_GetTicks();
 		// Uint64 startPerf = SDL_GetPerformanceCounter();
 
@@ -243,17 +281,22 @@ void Game::Play() {
 
         Uint64 end = SDL_GetPerformanceCounter();
 
-        gamePlay->elapsed = (end - start) / (float)SDL_GetPerformanceFrequency();
-        gamePlay->fps = (1.0f / gamePlay->elapsed);
+        // gamePlay->elapsed = (end - start) / (float)SDL_GetPerformanceFrequency();
+        gamePlay->SetElapsed( (end - start) / (float)SDL_GetPerformanceFrequency() );
+
+        // gamePlay->fps = (1.0f / gamePlay->elapsed);
+        gamePlay->SetFPS( 1.0f / gamePlay->GetElapsed() );
+
+
         // std::cout << "elapsed:     " << gamePlay->elapsed << " fps:     " << gamePlay->fps << "    ,total: " << gamePlay->totalFrames << '\n';
     }
 
-    ComputeHighScore(gamePlay->totalFrames);
+    ComputeHighScore(gamePlay->GetTotalFrames());
 
     int arr[3];
     GetHighScores( arr );
 
-    std::cout << arr[0] << "     " << arr[1] << "     " << arr[2] << '\n'; 
+    // std::cout << arr[0] << "     " << arr[1] << "     " << arr[2] << '\n'; 
 
     gamePlay->Clean();
     
@@ -273,7 +316,7 @@ void Game::Clean() {
     TTF_Quit();
     SDL_Quit();
     
-    std::cout << "cleaned \n";
+    // std::cout << "cleaned \n";
 }
 
 bool Game::IsRunning() {
