@@ -9,7 +9,7 @@ void Game::Init(const char* title, int xpos, int ypos, int width, int height, bo
     SDL_Init( SDL_INIT_EVERYTHING );
     
     TTF_Init();
-    gFont = TTF_OpenFont("/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf", 24);
+    gFont = TTF_OpenFont("./gameData/fonts/UbuntuMono-R.ttf", 24);
 
     int flags = (fullscreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_SHOWN);
 
