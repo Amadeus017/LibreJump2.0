@@ -4,7 +4,7 @@ LINKER_FLAGS = -lSDL2 -lSDL2_ttf
 
 VPATH = ./src
 
-obj = main.o Game.o Entities.o
+obj = main.o Game.o GamePlay.o
 exec = game
 
 $(exec): $(obj)

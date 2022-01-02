@@ -2,9 +2,7 @@
 #ifndef _GAME_HPP_
 #define _GAME_HPP_
 
-#include <iostream>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+#include "./GamePlay.hpp"
 
 class Game {
 
@@ -39,6 +37,9 @@ public:
     void QueryScores(int, int);
 
     void Play();
+
+    int* GetHighScores( int *arr );
+    void ComputeHighScore( int score );
 
     void Clean();
 
