@@ -16,6 +16,9 @@ void Game::Init(const char* title, int xpos, int ypos, int width, int height, bo
     window = SDL_CreateWindow("LibreJump", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 800, flags);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
+    //SDL_Surface *bg = IMG_Load("./img/ninja.png");
+    //SDL_Texture *bg_tex = SDL_CreateTextureFromSurface(renderer, bg);
+
 
     gameState = MAIN_MENU;
     RenderMainMenu();
@@ -35,7 +38,7 @@ void Game::HandleEvents() {
             break;
 
         case SDL_MOUSEBUTTONDOWN:
-            std::cout << event.button.x << "        " << event.button.y << '\n';
+            //std::cout << event.button.x << "        " << event.button.y << '\n';
             
             if( gameState == MAIN_MENU )    QueryMainMenu( event.button.x, event.button.y );
             else if( gameState == SETTINGS )    QuerySettings( event.button.x, event.button.y );
@@ -54,21 +57,27 @@ void Game::RenderMainMenu() {
     SDL_SetRenderDrawColor( renderer, 0, 255, 0, 255 );
     SDL_RenderClear( renderer );
 
-    SDL_Rect b1, b2, b3;
+    SDL_Rect b1, b2, b3, b4;
 
     b1 = {100, 100, 200, 100};
-    b2 = {100, 300, 200, 100};
-    b3 = {100, 500, 200, 100};
+    b2 = {100, 250, 200, 100};
+    b3 = {100, 400, 200, 100};
+    b4 = {100, 550, 200, 100};
 
     UI::RenderTextBox(renderer, b1, "PLAY", gFont, {0,0,255}, {0,0,0});
     UI::RenderTextBox(renderer, b2, "SETTINGS", gFont, {0,0,255}, {0,0,0});
     UI::RenderTextBox(renderer, b3, "SCORE", gFont, {0,0,255}, {0,0,0});
+    UI::RenderTextBox(renderer, b4, "QUIT", gFont, {0,0,255}, {0,0,0});
+
+    SDL_Surface *bg = IMG_Load("./img/ninja.png");
+    SDL_Texture *bg_tex = SDL_CreateTextureFromSurface(renderer, bg);
+    SDL_RenderCopy(renderer, bg_tex, NULL, NULL);
 
     SDL_RenderPresent( renderer );
 }
 void Game::QueryMainMenu( int posX, int posY ) {
 
-    std::cout << posX << "         <<\n";
+    //std::cout << posX << "         <<\n";
 
     if( (100 < posX) and (posX < 300) and (100 < posY) and (posY < 200) ) {
 
@@ -77,20 +86,29 @@ void Game::QueryMainMenu( int posX, int posY ) {
 
     } 
     
-    else if((100 < posX) and (posX < 300) and (300 < posY) and (posY < 400)) {
+    else if((100 < posX) and (posX < 300) and (250 < posY) and (posY < 350)) {
 
         gameState = SETTINGS;
         RenderSettings();
     }
 
-    else if((100 < posX) and (posX < 300) and (500 < posY) and (posY < 600)) {
+    else if((100 < posX) and (posX < 300) and (400 < posY) and (posY < 500)) {
 
         gameState = SCORE;
         RenderScores();
     }
+
+    else if((100 < posX) and (posX < 300) and (550 < posY) and (posY < 650)) {
+
+        SDL_Quit();
+    }
 }
 
 void Game::RenderSettings() {
+
+    //SDL_Surface *temp = IMG_Load("./img/Ninja.png");
+    //SDL_Texture *tex = SDL_CreateTextureFromSurface(renderer, temp);
+    //SDL_FreeSurface(temp);
     
     SDL_SetRenderDrawColor( renderer, 255, 255, 0, 255 );
     SDL_RenderClear( renderer );
@@ -178,7 +196,7 @@ void Game::ComputeHighScore( int score ) {
 
     fout.open("./gameData/highScores", std::ofstream::out | std::ofstream::trunc);
 
-    std::cout << "____" << score << "_____" << scores[0]  << "_________" << scores[1]  << "_________" << scores[2] << "\n\n";
+    std::cout << "YOUR SCORE: " << score << "\n\nHIGH SCORES:\n" << scores[0]  << std::endl << scores[1]  << std::endl << scores[2] << "\n\n";
 
     for(int i = 0; i < 3; i++) {
         if(score > scores[i]) {
@@ -208,7 +226,6 @@ void Game::Play() {
 
     // float fps = 0;
 
-    std::cout << "here";
 
     GamePlay *gamePlay = new GamePlay( renderer, gFont );
 
@@ -242,7 +259,7 @@ void Game::Play() {
     int arr[3];
     GetHighScores( arr );
 
-    std::cout << arr[0] << "     " << arr[1] << "     " << arr[2] << '\n'; 
+    //std::cout << arr[0] << "     " << arr[1] << "     " << arr[2] << '\n'; 
 
     gamePlay->Clean();
     
