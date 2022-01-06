@@ -20,7 +20,7 @@ void UI::RenderTextBox( SDL_Renderer *renderer, SDL_Rect rect, const char* conte
 
 Entity::Entity() {}
 Entity::~Entity() {}
-void Entity::Render( SDL_Renderer *renderer ) {
+void Entity::Render( SDL_Renderer *renderer ) { // Used for rendering
 
     SDL_SetRenderDrawColor( renderer, 0, 200, 20, 255 );
     SDL_RenderFillRect( renderer, &hitBox );
@@ -56,7 +56,7 @@ float Entity::GetHeight() {
 
 
 
-Player::Player() {
+Player::Player() { // Player of the game (Ninja)
 
     coolTime = 0;
 
@@ -92,7 +92,7 @@ void Player::Jump() {
     coolTime = 0.1;
 }
 
-Obstacle::Obstacle( CurrWall currWall, float fallRate ) {
+Obstacle::Obstacle( CurrWall currWall, float fallRate ) { // Obstacle of the game
     
     this->currWall = currWall;
 
@@ -129,9 +129,7 @@ Walls::Walls() {
     r2.y = 0;
 }
 Walls::~Walls() {}
-void Walls::Render( SDL_Renderer *renderer ) {
-
-    // SDL_SetRenderDrawColor( renderer, 0, 255, 255, 255 );
+void Walls::Render( SDL_Renderer *renderer ) { // Creates Two walls
 
     SDL_SetRenderDrawColor( renderer, 0, 0, 255, 255 );
     SDL_RenderFillRect( renderer, &r1 );
@@ -158,26 +156,13 @@ Score::Score() {
     scoreBox.y = 100;
 }
 Score::~Score() {}
-void Score::Render( SDL_Renderer *renderer, const char* content, TTF_Font *gFont ) {
-
-    // SDL_Surface* surfaceMessage =
-    //     TTF_RenderText_Solid(gFont, content, {0, 0, 0}); 
-
-    // // now you can convert it into a texture
-    // SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
-
-    // SDL_FreeSurface( surfaceMessage ); 
-
-    // SDL_SetRenderDrawColor( renderer, 0, 0, 255, 0 );
-    // SDL_RenderFillRect( renderer, &scoreBox );
-
-    // SDL_RenderCopy( renderer, Message, NULL, &scoreBox );
+void Score::Render( SDL_Renderer *renderer, const char* content, TTF_Font *gFont ) { // Shows score on the screen
 
     UI::RenderTextBox( renderer, scoreBox, content, gFont, {0,0,255,255}, {0,0,0});
 }
 
 
-GamePlay::GamePlay( SDL_Renderer *renderer, TTF_Font *gFont, int difficulty ) {
+GamePlay::GamePlay( SDL_Renderer *renderer, TTF_Font *gFont, int difficulty ) { // Starts the game
     
     scenery = new Scenery();
     walls = new Walls();
@@ -203,15 +188,6 @@ GamePlay::GamePlay( SDL_Renderer *renderer, TTF_Font *gFont, int difficulty ) {
     fallRates[2] = 800.0;
 
     this->difficulty = difficulty;
-
-    // std::cout << fallRates[difficulty];
-
-    // SDL_SetRenderDrawColor( renderer, 0, 255, 255, 255 );
-    // SDL_RenderClear( renderer );
-    // SDL_RenderPresent( renderer );
-
-    // scenery->Render(renderer);
-    // walls->Render(renderer);
 }
 
 GamePlay::~GamePlay() {
@@ -230,7 +206,7 @@ void GamePlay::GenerateObstacle() {
 
     obstacles.push_back(o);
 }
-bool GamePlay::CheckCollision() {
+bool GamePlay::CheckCollision() { // Collision Detection and ending game
     
     for(auto o : obstacles) {
         if(player->GetCurrWall() == o->GetCurrWall()) {
@@ -238,18 +214,8 @@ bool GamePlay::CheckCollision() {
 
                 isPlaying = false;
 
-                // std::cout << "game over\n";
-
                 SDL_SetRenderDrawColor( renderer, 100, 100, 100, 255 );
                 SDL_RenderClear( renderer );
-
-                // SDL_Surface* surfaceMessage =
-                //     TTF_RenderText_Solid(gFont, "GAME OVER", {0, 0, 0}); 
-
-                // // now you can convert it into a texture
-                // SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
-           
-                // SDL_FreeSurface( surfaceMessage ); 
 
                 SDL_Rect r;
 
@@ -257,12 +223,7 @@ bool GamePlay::CheckCollision() {
                 r.w = 800;
                 r.x = 0;
                 r.y = 250;
-
-                // SDL_SetRenderDrawColor( renderer, 0, 255, 0, 255 );
-                // SDL_RenderFillRect( renderer, &r );
-
-                // SDL_RenderCopy( renderer, Message, NULL, &r );
-
+               
                 UI::RenderTextBox( renderer, r, "GAME OVER!", gFont, {0,255,0}, {0,0,0});
 
                 char numberstring[50];
@@ -286,7 +247,7 @@ void GamePlay::ReduceObstacleCoolTime( float elapsed ) {
     // std::cout << coolTime << '\n';
 }
 
-void GamePlay::HandleEvents() {
+void GamePlay::HandleEvents() {  // Jumping of ninja and quit game
     
     SDL_Event event;
     SDL_PollEvent(&event);
