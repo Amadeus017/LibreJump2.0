@@ -4,7 +4,7 @@
 Game::Game() {}
 Game::~Game() {}
 
-void Game::Init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen) {
+void Game::Init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen) { // Initialises SDL
 
     SDL_Init( SDL_INIT_EVERYTHING );
     
@@ -13,8 +13,8 @@ void Game::Init(const char* title, int xpos, int ypos, int width, int height, bo
 
     int flags = (fullscreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_SHOWN);
 
-    window = SDL_CreateWindow("LibreJump", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 800, flags);
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    window = SDL_CreateWindow("LibreJump", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 800, flags); // Creates Window
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED); // Creates Renderer
 
 
     gameState = MAIN_MENU;
@@ -25,7 +25,7 @@ void Game::Init(const char* title, int xpos, int ypos, int width, int height, bo
     isRunning = true;
 }
 
-void Game::HandleEvents() {
+void Game::HandleEvents() {  // Responds to user inputs
 
     SDL_Event event;
     SDL_WaitEvent( &event );
@@ -37,7 +37,6 @@ void Game::HandleEvents() {
             break;
 
         case SDL_MOUSEBUTTONDOWN:
-            // std::cout << event.button.x << "        " << event.button.y << '\n';
             
             if( gameState == MAIN_MENU )    QueryMainMenu( event.button.x, event.button.y );
             else if( gameState == SETTINGS )    QuerySettings( event.button.x, event.button.y );
@@ -51,7 +50,7 @@ void Game::HandleEvents() {
     }
 }
 
-void Game::RenderMainMenu() {
+void Game::RenderMainMenu() { // Display the game menu
 
     SDL_SetRenderDrawColor( renderer, 0, 255, 0, 255 );
     SDL_RenderClear( renderer );
@@ -71,9 +70,7 @@ void Game::RenderMainMenu() {
 
     SDL_RenderPresent( renderer );
 }
-void Game::QueryMainMenu( int posX, int posY ) {
-
-    // std::cout << posX << "         <<\n";
+void Game::QueryMainMenu( int posX, int posY ) { //Takes action based on selection
 
     if( (100 < posX) and (posX < 300) and (100 < posY) and (posY < 200) ) {
 
@@ -100,7 +97,7 @@ void Game::QueryMainMenu( int posX, int posY ) {
     }
 }
 
-void Game::RenderSettings() {
+void Game::RenderSettings() {  // Settings page
     
     SDL_SetRenderDrawColor( renderer, 255, 255, 0, 255 );
     SDL_RenderClear( renderer );
@@ -122,7 +119,7 @@ void Game::RenderSettings() {
     SDL_RenderPresent( renderer );
 
 }
-void Game::QuerySettings( int posX, int posY ) {
+void Game::QuerySettings( int posX, int posY ) { // Set Difficulty
 
     if( (100 < posX) and (posX < 300) and (100 < posY) and (posY < 200) ) {
 
@@ -153,7 +150,7 @@ void Game::QuerySettings( int posX, int posY ) {
     RenderMainMenu();
 }
 
-void Game::RenderScores() {
+void Game::RenderScores() { //Display Scores
 
     SDL_SetRenderDrawColor( renderer, 255, 0, 255, 255 );
     SDL_RenderClear( renderer );
@@ -196,16 +193,10 @@ void Game::QueryScores( int posX, int posY ) {
     }
 }
 
-int* Game::GetHighScores( int *arr ) {
+int* Game::GetHighScores( int *arr ) {  // Returns 3 highest scores
 
     std::ifstream fin;
     fin.open("./gameData/highScores", std::ios_base::in);
-
-    // std::string line;
-
-    // std::cout<< "asdnalsjdn";
-
-    // int arr[3];
 
     fin >> arr[0] >> arr[1] >> arr[2];
 
@@ -214,7 +205,7 @@ int* Game::GetHighScores( int *arr ) {
     return arr;
 } 
 
-void Game::ComputeHighScore( int score ) {
+void Game::ComputeHighScore( int score ) { // Calculates High scores
 
 
     int scores[3];
@@ -223,8 +214,6 @@ void Game::ComputeHighScore( int score ) {
     std::ofstream fout;
 
     fout.open("./gameData/highScores", std::ofstream::out | std::ofstream::trunc);
-
-    // std::cout << "____" << score << "_____" << scores[0]  << "_________" << scores[1]  << "_________" << scores[2] << "\n\n";
 
     for(int i = 0; i < 3; i++) {
         if(score > scores[i]) {
@@ -241,35 +230,15 @@ void Game::ComputeHighScore( int score ) {
     fout << scores[0] << '\n' << scores[1] << '\n' << scores[2];
 }
 
-void Game::Play() {
-
-    // SDL_SetRenderDrawColor( renderer, 255, 0, 0, 255 );
-    // SDL_RenderClear( renderer );
-    // SDL_RenderPresent( renderer );
+void Game::Play() { // Main Game loop
 
     srand(time(NULL));
 
-    // Uint32 totalFrameTicks = 0;
-	// Uint32 totalFrames = 0;
-
-    // float fps = 0;
-
-    // std::cout << "here";
-
-    // std::cout << "hererere   " << difficulty << '\n'; 
     GamePlay *gamePlay = new GamePlay( renderer, gFont, difficulty );
 
-    // gamePlay->GenerateObstacle();
-
-    // gamePlay->elapsed = 0;
-
     while( gamePlay->IsPlaying() ) {
-
-        // gamePlay->totalFrames++;
+	    
         gamePlay->SetTotalFrames( gamePlay->GetTotalFrames() + 1 );
-
-		// Uint32 startTicks = SDL_GetTicks();
-		// Uint64 startPerf = SDL_GetPerformanceCounter();
 
         Uint64 start = SDL_GetPerformanceCounter();
 
@@ -281,22 +250,16 @@ void Game::Play() {
 
         Uint64 end = SDL_GetPerformanceCounter();
 
-        // gamePlay->elapsed = (end - start) / (float)SDL_GetPerformanceFrequency();
-        gamePlay->SetElapsed( (end - start) / (float)SDL_GetPerformanceFrequency() );
+	    gamePlay->SetElapsed( (end - start) / (float)SDL_GetPerformanceFrequency() );
 
-        // gamePlay->fps = (1.0f / gamePlay->elapsed);
         gamePlay->SetFPS( 1.0f / gamePlay->GetElapsed() );
 
-
-        // std::cout << "elapsed:     " << gamePlay->elapsed << " fps:     " << gamePlay->fps << "    ,total: " << gamePlay->totalFrames << '\n';
     }
 
     ComputeHighScore(gamePlay->GetTotalFrames());
 
     int arr[3];
     GetHighScores( arr );
-
-    // std::cout << arr[0] << "     " << arr[1] << "     " << arr[2] << '\n'; 
 
     gamePlay->Clean();
     
@@ -306,7 +269,7 @@ void Game::Play() {
     RenderMainMenu();
 }
 
-void Game::Clean() {
+void Game::Clean() { // Close SDL
 
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
@@ -316,7 +279,6 @@ void Game::Clean() {
     TTF_Quit();
     SDL_Quit();
     
-    // std::cout << "cleaned \n";
 }
 
 bool Game::IsRunning() {
